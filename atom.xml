@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Blog</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="/"/>
+  <updated>2020-11-11T03:17:01.129Z</updated>
+  <id>/</id>
+  
+  <author>
+    <name>liuzhang</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一次git提交流程</title>
+    <link href="/2020/11/06/%E4%B8%80%E6%AC%A1git%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B/"/>
+    <id>/2020/11/06/一次git提交流程/</id>
+    <published>2020-11-06T03:39:15.000Z</published>
+    <updated>2020-11-11T03:17:01.129Z</updated>
+    
+    <summary type="html">
+    
+      刚开始git提交修改代码时，总遇到很多问题，比如commit记录条数太多，显得冗杂，应该rebase合并，但rebase又失败...
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="git" scheme="/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>工作中常用的git命令</title>
+    <link href="/2020/10/28/2020-10-28/"/>
+    <id>/2020/10/28/2020-10-28/</id>
+    <published>2020-10-28T10:31:18.000Z</published>
+    <updated>2020-11-10T11:54:28.829Z</updated>
+    
+    <summary type="html">
+    
+      工作中常用的命令，（平常个人使用都是在主分支上直接迭代的，所以有必要了解下分支的使用。）
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="git" scheme="/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>实现 CORS 跨域请求的方式</title>
+    <link href="/2020/10/27/2020-10-27/"/>
+    <id>/2020/10/27/2020-10-27/</id>
+    <published>2020-10-27T11:45:29.000Z</published>
+    <updated>2020-10-27T11:50:25.285Z</updated>
+    
+    <summary type="html">
+    
+      实现 CORS 跨域请求的方式
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="跨域" scheme="/tags/%E8%B7%A8%E5%9F%9F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>java下的mongDB基操</title>
+    <link href="/2020/10/26/2020-10-26/"/>
+    <id>/2020/10/26/2020-10-26/</id>
+    <published>2020-10-26T12:37:41.000Z</published>
+    <updated>2020-11-11T07:08:48.230Z</updated>
+    
+    <summary type="html">
+    
+      mongDB基操
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>解决因数据库外键约束而导致的数据无法删除</title>
+    <link href="/2020/10/23/2020-10-23/"/>
+    <id>/2020/10/23/2020-10-23/</id>
+    <published>2020-10-23T01:05:44.000Z</published>
+    <updated>2020-10-26T12:45:43.624Z</updated>
+    
+    <summary type="html">
+    
+      sql操作
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="sql" scheme="/tags/sql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo-Theme-Sakura</title>
+    <link href="/2018/12/12/Hexo-Theme-Sakura/"/>
+    <id>/2018/12/12/Hexo-Theme-Sakura/</id>
+    <published>2018-12-12T14:16:01.000Z</published>
+    <updated>2020-10-26T12:05:28.003Z</updated>
+    
+    <summary type="html">
+    
+      hexo-sakura主题使用教程
+    
+    </summary>
+    
+      <category term="技术" scheme="/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="web" scheme="/tags/web/"/>
+    
+      <category term="悦读" scheme="/tags/%E6%82%A6%E8%AF%BB/"/>
+    
+  </entry>
+  
+</feed>
