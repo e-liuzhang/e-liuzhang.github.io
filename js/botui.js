@@ -26,7 +26,7 @@ function bot_ui_ini() {
     }).then(function () {
         botui.message.add({
             delay: 1100,
-            content: "这里是 流涨
+            content: "这里是 流涨"
         }).then(function () {
             botui.message.add({
                 delay: 1100,
@@ -106,7 +106,7 @@ function bot_ui_ini() {
         thirdpart = function () {
             botui.message.add({
                 delay: 1E3,
-                content: "至于名字含义嘛~取自高中的课文《阿房宫赋》里的/" 渭流涨腻，弃脂水也。/"。
+                content: "至于名字含义嘛~取自高中的课文《阿房宫赋》里的—— 渭流涨腻，弃脂水也。
 					那时拿着课本的我还是中二青年，
 					(=￣ω￣=)
 					渭流涨腻=渭水流涨=为谁流涨，
@@ -119,7 +119,7 @@ function bot_ui_ini() {
                 botui.action.button({
                     delay: 1500,
                     action: [{
-                        text: "为什么是白猫呢？ 🤔",
+                        text: "为什么是妹子头像呢？ 🤔",
                         value: "why-cat"
                     }]
                 }).then(function (a) {
@@ -130,11 +130,11 @@ function bot_ui_ini() {
         fourthpart = function () {
             botui.message.add({
                 delay: 1E3,
-                content: "因为对GitHub有种执念… "
+                content: "因为对二次元有种执念… "
             }).then(function () {
                 botui.message.add({
                     delay: 1100,
-                    content: "而且我真的是猫控！"
+                    content: "而且我真的是X控！"
                 }).then(function () {
                     botui.action.button({
                         delay: 1500,
@@ -151,7 +151,7 @@ function bot_ui_ini() {
         fifthpart = function () {
             botui.message.add({
                 delay: 1E3,
-                content: "emmmm，看备案信息你就知道了=.= 本来想要zheng.xin的，但50万真买不起。。"
+                content: "emmmm，看备案信息你就知道了=.= 本来想要liuzhang.top的，但真买不起。。"
             }).then(function () {
                 botui.message.add({
                     delay: 1600,
