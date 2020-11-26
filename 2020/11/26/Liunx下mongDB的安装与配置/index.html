@@ -395,7 +395,78 @@
         <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
         
         <div class="entry-content">
-          
+          <h1 id="Liunx下mongDB的安装与配置"><a href="#Liunx下mongDB的安装与配置" class="headerlink" title="Liunx下mongDB的安装与配置"></a>Liunx下mongDB的安装与配置</h1><h2 id="一、mongodb安装和配置"><a href="#一、mongodb安装和配置" class="headerlink" title="一、mongodb安装和配置"></a>一、mongodb安装和配置</h2><p>1、创建tools目录，用于存放安装包</p>
+<pre><code class="bash">cd /usr/local
+mkdir -p tools
+cd tools
+</code></pre>
+<p>2、下载mongodb包（其它版本请自行下载）</p>
+<pre><code class="shell">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.4.tgz
+</code></pre>
+<p>3、解压和复制mongodb至目录 /usr/local/mongodb</p>
+<pre><code class="bash">tar -zxvf mongodb-linux-x86_64-rhel70-3.2.4.tgz  
+cp -r mongodb-linux-x86_64-rhel70-3.2.4 /usr/local/mongodb  
+</code></pre>
+<p>4、系统profile配置</p>
+<pre><code class="shell">vi /etc/profile  
+
+export MONGODB_HOME=/usr/local/mongodb  
+export PATH=$PATH:$MONGODB_HOME/bin  
+</code></pre>
+<p>保存后，重启系统配置</p>
+<pre><code class="bash">source /etc/profile
+</code></pre>
+<p>5、mongodb启动配置</p>
+<pre><code class="shell">cd /usr/local/mongodb/bin  
+
+mkdir data
+cd data
+mkdir db
+cd ..
+mkdir logs
+cd logs
+touch mongodb.log
+cd ..
+
+vi mongodb.conf  
+
+dbpath = /usr/local/mongodb/data/db #数据文件存放目录  
+logpath = /usr/local/mongodb/logs/mongodb.log #日志文件存放目录  
+port = 27017  #端口  
+fork = true  #以守护程序的方式启用，即在后台运行  
+nohttpinterface = true 
+</code></pre>
+<p>启动配置保存退出，bin目录下就存在mongodb.conf文件</p>
+<h2 id="二、mongodb测试"><a href="#二、mongodb测试" class="headerlink" title="二、mongodb测试"></a>二、mongodb测试</h2><p>1、设置mongodb.service启动服务</p>
+<pre><code class="shell">cd /lib/systemd/system  
+vi mongodb.service  
+
+[Unit]  
+Description=mongodb 
+After=network.target remote-fs.target nss-lookup.target  
+
+[Service]  
+Type=forking 
+ExecStart=/usr/local/mongodb/bin/mongod --config /usr/local/mongodb/bin/mongodb.conf  
+ExecReload=/bin/kill -s HUP $MAINPID  
+ExecStop=/usr/local/mongodb/bin/mongod --shutdown --config /usr/local/mongodb/bin/mongodb.conf  
+PrivateTmp=true 
+
+[Install]  
+WantedBy=multi-user.target  
+</code></pre>
+<p>2、设置mongodb.service权限</p>
+<pre><code class="shell">chmod 754 mongodb.service
+</code></pre>
+<p>3、系统mongodb.service操作命令</p>
+<pre><code class="bash">#启动服务  
+systemctl start mongodb.service  
+#关闭服务  
+systemctl stop mongodb.service  
+#开机启动  
+systemctl enable mongodb.service  
+</code></pre>
+
         </div>
         <!-- .entry-content -->
         <div class="single-reward">

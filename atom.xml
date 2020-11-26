@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="/"/>
-  <updated>2020-11-26T12:41:32.425Z</updated>
+  <updated>2020-11-26T12:45:57.995Z</updated>
   <id>/</id>
   
   <author>
@@ -21,9 +21,11 @@
     <link href="/2020/11/26/Liunx%E4%B8%8BmongDB%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/"/>
     <id>/2020/11/26/Liunx下mongDB的安装与配置/</id>
     <published>2020-11-26T12:41:32.000Z</published>
-    <updated>2020-11-26T12:41:32.425Z</updated>
+    <updated>2020-11-26T12:45:57.995Z</updated>
     
     <summary type="html">
+    
+      mongDB的安装与配置
     
     </summary>
     
