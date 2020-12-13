@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">Liunx下mongDB的安装与配置 | Blog</title>
+  <title itemprop="name">Docker学习 | Blog</title>
   
     <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/e-liuzhang/cdn@v1.0/images/avatar.ico">
   
@@ -369,7 +369,7 @@
     </div>
     <header class="pattern-header single-header">
       <h1 class="entry-title">
-      Liunx下mongDB的安装与配置</h1>
+      Docker学习</h1>
       <p class="entry-census">
         <span>
           <a href="/about">
@@ -381,7 +381,7 @@
         </span>
         <span class="bull">
         ·</span>
-        2020-11-26<span class="bull">
+        2020-12-13<span class="bull">
         ·</span>
       <span id="busuanzi_value_page_pv"></span>次阅读</p>
     </header>
@@ -395,77 +395,526 @@
         <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
         
         <div class="entry-content">
-          <h1 id="Liunx下mongDB的安装与配置"><a href="#Liunx下mongDB的安装与配置" class="headerlink" title="Liunx下mongDB的安装与配置"></a>Liunx下mongDB的安装与配置</h1><h2 id="一、mongodb安装和配置"><a href="#一、mongodb安装和配置" class="headerlink" title="一、mongodb安装和配置"></a>一、mongodb安装和配置</h2><p>1、创建tools目录，用于存放安装包</p>
-<pre><code class="bash">cd /usr/local
-mkdir -p tools
-cd tools
+          <h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><blockquote>
+<p>环境检查</p>
+</blockquote>
+<pre><code class="shell">#系统内核是3.10以上的
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# uname -r
+3.10.0-693.2.2.el7.x86_64
 </code></pre>
-<p>2、下载mongodb包（其它版本请自行下载）</p>
-<pre><code class="shell">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.4.tgz
-</code></pre>
-<p>3、解压和复制mongodb至目录 /usr/local/mongodb</p>
-<pre><code class="bash">tar -zxvf mongodb-linux-x86_64-rhel70-3.2.4.tgz  
-cp -r mongodb-linux-x86_64-rhel70-3.2.4 /usr/local/mongodb  
-</code></pre>
-<p>4、系统profile配置</p>
-<pre><code class="shell">vi /etc/profile  
+<pre><code class="shell">系统版本
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# cat /etc/os-release 
+NAME=&quot;CentOS Linux&quot;
+VERSION=&quot;7 (Core)&quot;
+ID=&quot;centos&quot;
+ID_LIKE=&quot;rhel fedora&quot;
+VERSION_ID=&quot;7&quot;
+PRETTY_NAME=&quot;CentOS Linux 7 (Core)&quot;
+ANSI_COLOR=&quot;0;31&quot;
+CPE_NAME=&quot;cpe:/o:centos:centos:7&quot;
+HOME_URL=&quot;https://www.centos.org/&quot;
+BUG_REPORT_URL=&quot;https://bugs.centos.org/&quot;
 
-export MONGODB_HOME=/usr/local/mongodb  
-export PATH=$PATH:$MONGODB_HOME/bin  
+CENTOS_MANTISBT_PROJECT=&quot;CentOS-7&quot;
+CENTOS_MANTISBT_PROJECT_VERSION=&quot;7&quot;
+REDHAT_SUPPORT_PRODUCT=&quot;centos&quot;
+REDHAT_SUPPORT_PRODUCT_VERSION=&quot;7&quot;
 </code></pre>
-<p>保存后，重启系统配置</p>
-<pre><code class="bash">source /etc/profile
+<blockquote>
+<p>安装</p>
+</blockquote>
+<p>帮助文档：<a href="https://docs.docker.com/engine/install/centos/" target="_blank" rel="noopener">https://docs.docker.com/engine/install/centos/</a></p>
+<pre><code class="shell">#1.卸载旧的版本
+yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+#2.需要的安装包
+yum install -y yum-utils
+
+#3.设置镜像的仓库
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo  #默认是从国外的
+
+yum-config-manager \
+    --add-repo \
+http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo #推荐使用阿里云的
+
+#更新yum软件包索引
+yum makecache fast
+
+#4.安装docker相关的 docker-ce 社区 ee 企业版
+yum install docker-ce docker-ce-cli containerd.io
+
+#5. 启动docker
+systemctl start docker
+
+#6. 使用docker version是否安装成功
+
+#7. docker run hello-world
+docker run hello-world
+
+#8. 查看一下下载的这个hello-world镜像
+docker images
 </code></pre>
-<p>5、mongodb启动配置</p>
-<pre><code class="shell">cd /usr/local/mongodb/bin  
+<p>了解：卸载docker</p>
+<pre><code class="shell">#1.卸载依赖
+yum remove docker-ce docker-ce-cli containerd.io
+#2.删除资源
+rm -rf /var/lib/docker
 
-mkdir data
-cd data
-mkdir db
-cd ..
-mkdir logs
-cd logs
-touch mongodb.log
-cd ..
-
-vi mongodb.conf  
-
-dbpath = /usr/local/mongodb/data/db #数据文件存放目录  
-logpath = /usr/local/mongodb/logs/mongodb.log #日志文件存放目录  
-port = 27017  #端口  
-fork = true  #以守护程序的方式启用，即在后台运行  
-nohttpinterface = true 
+# /var/lib/docker docker的默认工作路径
 </code></pre>
-<p>启动配置保存退出，bin目录下就存在mongodb.conf文件</p>
-<h2 id="二、mongodb测试"><a href="#二、mongodb测试" class="headerlink" title="二、mongodb测试"></a>二、mongodb测试</h2><p>1、设置mongodb.service启动服务</p>
-<pre><code class="shell">cd /lib/systemd/system  
-vi mongodb.service  
+<h3 id="阿里云镜像加速"><a href="#阿里云镜像加速" class="headerlink" title="阿里云镜像加速"></a>阿里云镜像加速</h3><p>1.登录阿里云找到容器服务</p>
+<p>2.找到镜像加速地址</p>
+<p>3.配置使用</p>
+<pre><code class="shell">sudo mkdir -p /etc/docker
 
-[Unit]  
-Description=mongodb 
-After=network.target remote-fs.target nss-lookup.target  
+sudo tee /etc/docker/daemon.json &lt;&lt;-&#39;EOF&#39;
+{
+  &quot;registry-mirrors&quot;: [&quot;https://3cinqcbi.mirror.aliyuncs.com&quot;]
+}
+EOF
 
-[Service]  
-Type=forking 
-ExecStart=/usr/local/mongodb/bin/mongod --config /usr/local/mongodb/bin/mongodb.conf  
-ExecReload=/bin/kill -s HUP $MAINPID  
-ExecStop=/usr/local/mongodb/bin/mongod --shutdown --config /usr/local/mongodb/bin/mongodb.conf  
-PrivateTmp=true 
+sudo systemctl daemon-reload
 
-[Install]  
-WantedBy=multi-user.target  
+sudo systemctl restart docker
 </code></pre>
-<p>2、设置mongodb.service权限</p>
-<pre><code class="shell">chmod 754 mongodb.service
+<h3 id="底层原理"><a href="#底层原理" class="headerlink" title="底层原理"></a>底层原理</h3><p><strong>Docker是怎么工作的？</strong></p>
+<p>Docker是一个Client- Server结构的系统，Docker的守护进程运行在主机上。通过Socket从客户端访问。</p>
+<p>DockerServer接收到Docker-Client的指令，就会执行这个命令。</p>
+<p><img src="Docker学习.assets/image-20201209102525683.png" alt="image-20201209102525683"></p>
+<p><strong>Docker为什么比VM快？</strong></p>
+<ol>
+<li>Docker有着比虚拟机更少的抽象层。</li>
+<li>docker利用的是宿主机的内核，VM需要是Guest OS。 </li>
+</ol>
+<p><img src="Docker学习.assets/image-20201209102729550.png" alt="image-20201209102729550"></p>
+<p>所以说，新建一个容器的时候，docker不需要像虚拟机一样重新加载一个操作系统内核，避免引导。虚拟机是加载Guest OS，分钟级别的，而docker是利用宿主机的操作系统，省略了这个复杂的过程，秒级。</p>
+<h2 id="Docker的常用命令"><a href="#Docker的常用命令" class="headerlink" title="Docker的常用命令"></a>Docker的常用命令</h2><h3 id="帮助命令"><a href="#帮助命令" class="headerlink" title="帮助命令"></a>帮助命令</h3><pre><code class="shell">docker version    #显示docker的版本信息
+docker info       #显示docker的系统信息，包括镜像和容器的数量
+docker --help     # 帮助命令
 </code></pre>
-<p>3、系统mongodb.service操作命令</p>
-<pre><code class="bash">#启动服务  
-systemctl start mongodb.service  
-#关闭服务  
-systemctl stop mongodb.service  
-#开机启动  
-systemctl enable mongodb.service  
+<p>帮助文档的地址：<a href="https://docs.docker.com/engine/reference/commandline/" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/commandline/</a></p>
+<h3 id="镜像命令"><a href="#镜像命令" class="headerlink" title="镜像命令"></a>镜像命令</h3><p>docker images 查看所有本地的主机上的镜像</p>
+<pre><code class="shell">[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hello-world         latest              bf756fb1ae65        11 months ago       13.3kB
+
+#解释
+REPOSITORY 镜像的仓库源
+TAG        镜像的标签
+IMAGE ID   镜像的id
+CREATED    镜像的创建时间
+SIZE       镜像的大小
+
+#可选项
+  -a, --all             #列出所有的镜像
+  -q, --quiet           #只显示镜像的id
 </code></pre>
+<p>docker search 搜索镜像</p>
+<pre><code class="shell">docker search mysql
+
+#可选项
+ --filter=STARS=3000 #搜索出来的镜像就是STARS大于3000
+ docker search mysql --filter=STARS=3000
+</code></pre>
+<p><strong>docker pull</strong> 下载镜像</p>
+<pre><code class="shell">#下载镜像 docker pull 镜像名[:tag]
+
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker pull mysql
+Using default tag: latest  #如果不写tag，默认就是lastest
+latest: Pulling from library/mysql
+852e50cd189d: Pull complete #分层下载，docker image的核心 联合文件系统 
+29969ddb0ffb: Pull complete 
+a43f41a44c48: Pull complete 
+5cdd802543a3: Pull complete 
+b79b040de953: Pull complete 
+938c64119969: Pull complete 
+7689ec51a0d9: Pull complete 
+a880ba7c411f: Pull complete 
+984f656ec6ca: Pull complete 
+9f497bce458a: Pull complete 
+b9940f97694b: Pull complete 
+2f069358dc96: Pull complete 
+Digest: sha256:4bb2e81a40e9d0d59bd8e3dc2ba5e1f2197696f6de39a91e90798dd27299b093 #签名
+Status: Downloaded newer image for mysql:latest
+docker.io/library/mysql:latest #真实地址
+
+#等价于它
+docker pull mysql
+docker pull docker.io/library/mysql:lasest
+
+#指定版本下载
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker pull mysql:5.7
+5.7: Pulling from library/mysql
+852e50cd189d: Already exists 
+29969ddb0ffb: Already exists 
+a43f41a44c48: Already exists 
+5cdd802543a3: Already exists 
+b79b040de953: Already exists 
+938c64119969: Already exists 
+7689ec51a0d9: Already exists 
+36bd6224d58f: Pull complete 
+cab9d3fa4c8c: Pull complete 
+1b741e1c47de: Pull complete 
+aac9d11987ac: Pull complete 
+Digest: sha256:8e2004f9fe43df06c3030090f593021a5f283d028b5ed5765cc24236c2c4d88e
+Status: Downloaded newer image for mysql:5.7
+docker.io/library/mysql:5.7
+</code></pre>
+<p>docker rmi删除镜像</p>
+<pre><code class="shell">docker rmi -f 容器id #删除指定的容器
+docker rmi -f 容器id 容器id 容器id 容器id #删除多个容器
+docker rmi -f $(docker images -aq) #删除全部的容器
+</code></pre>
+<h3 id="容器命令"><a href="#容器命令" class="headerlink" title="容器命令"></a>容器命令</h3><p>说明：我们有了镜像才可以创建容器，Linux，下载一个centos镜像来测试学习</p>
+<pre><code class="shell"> docker pull centos
+</code></pre>
+<p>新建容器并启动</p>
+<pre><code class="shell">docker run [可选参数] image 
+
+#参数说明
+--name=&quot;Name&quot; 容器名字 tomcat01 tomcat02 ,用来区分容器
+-d            后台方式运行
+-it           使用交互方式运行 进入容器查看内容
+-P            指定容器的端口 -p 8080:8080
+    -p ip:主机端口：容器端口
+    -p 主机端口：容器端口（常用）
+    -p 容器端口
+-p            随机指定端口
+
+#测试，启动并进入容器
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker run -it centos /bin/bash
+[root@4c071ae07ed9 /]# ls #查看容器内的centos
+bin  etc   lib      lost+found  mnt  proc  run   srv  tmp  var dev  home  lib64  media       opt  root  sbin  sys  usr
+
+#从容器中返回主机
+[root@4c071ae07ed9 /]# exit
+</code></pre>
+<p><strong>列出所有的运行容器</strong></p>
+<pre><code class="shell">#docker ps 命令
+     #列出当前正在运行的容器
+-a   #列出当前正在运行的容器+带出历史运行过的容器
+-n=? #显示最近创建的容器
+-q   #只显示容器的编号
+</code></pre>
+<p><strong>退出容器</strong></p>
+<pre><code class="shell">exit  #直接容器停止并退出
+Ctrl + P + Q #容器不停止退出
+</code></pre>
+<p><strong>删除容器</strong></p>
+<pre><code class="shell">docker rm 容器id                 #删除指定的容器，不能删除正在运行的容器，如果要强制删除 rm-f
+docker rm -f $(docker ps -aq)   #删除所有的容器
+docker ps -a -q|xargs docker rm #删除所有的容器
+</code></pre>
+<p><strong>启动和停止容器的操作</strong></p>
+<pre><code class="shell">docker start 容器id     #启动容器
+docker restart 容器id   #重启容器
+docker stop 容器id      #停止当前正在运行的容器
+docker kill 容器id      #强制停止当前容器
+</code></pre>
+<h3 id="常用其他命令"><a href="#常用其他命令" class="headerlink" title="常用其他命令"></a>常用其他命令</h3><p><strong>后台启动容器</strong></p>
+<pre><code class="shell">#命令 docker run -d 镜像名
+docker run -d centos
+
+#问题docker ps ,发现centos 停止了
+
+#常见的坑：docker容器使用后台运行，就必须要有一个前台进程，docker发现没有应用，就会自动停止
+</code></pre>
+<p><strong>查看日志</strong></p>
+<pre><code class="shell">#显示日志
+-tf            #显示日志
+--tail number  #要显示日志条数
+
+docker logs -tf --tail 10 容器id
+</code></pre>
+<p><strong>查看容器中进程信息</strong> ps</p>
+<pre><code class="shell">#命令 docker top 容器id
+</code></pre>
+<p>查看镜像的元数据</p>
+<pre><code class="shell">#命令
+docker inspect 容器id
+</code></pre>
+<p><strong>进入当前正在运行的容器</strong></p>
+<pre><code class="shell">#我们通常容器都是使用后台方式运行的，需要进入容器，修改一些配置
+
+#命令
+docker exec -it 容器id bashShell
+
+#测试
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+85230a9eb268        centos              &quot;/bin/bash&quot;         3 hours ago         Up 7 seconds                            distracted_ride
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker top 85230a9eb268
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                7354                7337                0                   20:06               pts/0               00:00:00            /bin/bash
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+85230a9eb268        centos              &quot;/bin/bash&quot;         3 hours ago         Up 8 minutes                            distracted_ride
+[root@iz2ze7wyymbgnmhto7jt0dz ~]# docker exec -it 85230a9eb268 /bin/bash
+[root@85230a9eb268 /]# ls
+bin  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@85230a9eb268 /]# ps -ef
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 12:06 pts/0    00:00:00 /bin/bash
+root        14     0  0 12:15 pts/1    00:00:00 /bin/bash
+root        28    14  0 12:15 pts/1    00:00:00 ps -ef
+
+#方法二
+docker attach 容器id
+
+#docker exec    #进入容器后开启一个新的终端，可以在里面操作（常用）
+#docker attach  #进入容器正在执行的终端，不会启动新的进程
+</code></pre>
+<p>从容器内拷贝文件到主机上</p>
+<pre><code class="shell">docker cp 容器id:容器内路径  目的的主机路径
+
+#拷贝是一个手动过程，未来我们使用 -v 卷的技术，可以实现
+</code></pre>
+<h3 id="作业练习"><a href="#作业练习" class="headerlink" title="作业练习"></a>作业练习</h3><blockquote>
+<p>Docker 安装 Nginx</p>
+</blockquote>
+<pre><code class="shell">docker search nginx  #搜索镜像，建议去docker搜索，可以看帮助文档
+docker pull nginx    #下载镜像
+docker images        #查看容器是否安装好
+docker run -d --name nginx01 -p 3344:80 nginx  #后台运行运行名为nginx的容器并取名为nginx01，并将内部端口80映射到外部端口的3344
+docker ps            #查看是否正在运行
+curl localhost:3344  #查看该url情况
+docker exec -it nginx01 /bin/bash #进入容器
+whereis nginx        #查看文件
+
+
+
+</code></pre>
+<p>端口暴露的概念</p>
+<p><img src="Docker学习.assets/image-20201210101516847.png" alt="image-20201210101516847"></p>
+<p>思考问题：我们每次改动nginx配置文件，都需要进入容器内部，十分麻烦，要是可以在容器外部提供一个映射路径，达到在容器修改文件名，容器内部就可以自动修改。</p>
+<blockquote>
+<p>作业：docker来安装一个tomcat</p>
+</blockquote>
+<pre><code class="shell">#官方使用
+docker run -it --rm tomcat:9.0
+#我们之前的启动都是后台，停止之后，容器还是可以查到 docker run -it --rm ,一般用来测试，用完就删除
+#下载再启动
+docker pull tomcat
+docker images
+#启动运行
+docker run -d -p 3355:8080 --name tomcat01 tomcat
+
+#测试访问没有问题
+
+#进入容器
+docker exec -it tomcat01 /bin/bash
+
+#发现问题：1.Linux命令少了。2.没有webapp。 阿里云镜像的原因，默认是最小的镜像，所有不必要的都删除掉。
+cp webapps.dist/* webapps #在webapps.dist下有
+
+</code></pre>
+<p>思考问题：我们以后部署项目，都需要进入容器内部，十分麻烦，要是可以在容器外部提供一个映射路径，我们在外部放置项目，就自动同步到内部就好了。</p>
+<pre><code class="shell">#查看性能 docker stats
+</code></pre>
+<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><ul>
+<li>portainer(先用这个)</li>
+</ul>
+<pre><code class="shell">docker run -d -p 8088:9000 \
+--restart=always -v /var/run/docker.sock:/var/run/docker.sock --privileged=true portainer/portainer
+</code></pre>
+<p>访问测试：<a href="http://ip:8088" target="_blank" rel="noopener">http://ip:8088</a></p>
+<h2 id="Docker镜像讲解"><a href="#Docker镜像讲解" class="headerlink" title="Docker镜像讲解"></a>Docker镜像讲解</h2><h3 id="镜像是什么"><a href="#镜像是什么" class="headerlink" title="镜像是什么"></a>镜像是什么</h3><p>镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个软件所需的所有内容，包括代码、运行时、库、环境变量和配置文件。</p>
+<p>所有的应用，直接打包docker镜像，就可以直接跑起来、</p>
+<h3 id="Docker镜像加载原理"><a href="#Docker镜像加载原理" class="headerlink" title="Docker镜像加载原理"></a>Docker镜像加载原理</h3><blockquote>
+<p>UnionFS（联合文件系统）</p>
+</blockquote>
+<p>我们在下载的时候看到的一层层就是这个</p>
+<p>UnionFS（联合文件系统）：Union文件系统（UnionFS）是一种分层、轻量级并且高性能的文件系统，他支持对文件系统的修改，作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一虚拟文件系统下。Union 文件系统是Docker镜像的基础，镜像可以通过分层来进行继承，基于基础镜像（没有父镜像），可以制作各种具体的应用镜像。</p>
+<p>特性：一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件叠加起来，这样最终的文件系统会包含所有底层的文件和目录</p>
+<blockquote>
+<p>Docker镜像加载原理</p>
+</blockquote>
+<p>docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS。</p>
+<p>bootfs（boot file system）主要包含bootloader和kernel,bootloader主要是引导加载kernel，Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs。这一层与我们典型的Linux/Unix系统是一样的，包含boot加载器和内核。当boot加载完成之后整个内核就都在内存中了，此时内存的使用权已经由bootfs转交给内核，此时系统也会卸载bootfs。</p>
+<p>rootfs(root file system)，在bootfs之上。包含的就是典型Linux系统中的 /dev, /proc, /bin, /etc 等标准目录和文件。rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等等。</p>
+<p>对于一个精简的OS，rootfs可以很小，只需要包含最基本的命令，工具和程序库就可以了，因为底层直接用Host的kernel，自己只需要提供rootfs就可以了。由此可见对于不同的Linux发行版，bootfs基本是一致的，rootfs会有差别，因此不同的发行版可以共用bootfs。</p>
+<p>虚拟机是分钟级别的，docker是秒级别的。</p>
+<h3 id="分层理解"><a href="#分层理解" class="headerlink" title="分层理解"></a>分层理解</h3><blockquote>
+<p>分层的镜像</p>
+</blockquote>
+<p><strong>理解</strong>：</p>
+<p>所有的Docker镜像都起始于一个基础镜像层，当进行修改或增加新的内容时，就会在当前镜像层之上，创建新的镜像层。举一个简短的例子，假如基于Ubuntu Linux 16.04 创建一个新的镜像，这就是新镜像的第一层；如果在该镜像中添加Python包，就会在基础镜像层之上创建第二个镜像层；如果继续添加一个安全补丁，就会创建第三个镜像层。</p>
+<p>在添加额外的镜像层的同时，镜像始终保持是当前所有镜像的组合。</p>
+<blockquote>
+<p>特点</p>
+</blockquote>
+<p>Docker镜像都是只读的，当容器启动时，一个新的可写层被加载到镜像的顶部。这一层就是我们通常说的容器层，容器之下的都叫镜像层。</p>
+<p>如何提交一个自己的镜像</p>
+<h3 id="commit镜像"><a href="#commit镜像" class="headerlink" title="commit镜像"></a>commit镜像</h3><pre><code class="shell">docker commit 提交容器成为一个新的副本
+
+#命令和git原理类似
+docker commit -m=&quot;提交的描述信息&quot; -a=&quot;作者&quot; 容器id 目标镜像名:[TAG]
+</code></pre>
+<p>实战测试</p>
+<pre><code class="shell">#1. 启动一个默认的tomcat
+#2. 发现这个默认的tomcat是没有webapps应用，镜像原因，官方的镜像默认webapps下面是没有文件的
+#3. 自己拷贝进去基本的文件
+#4. 将我们操作过的容器通过commit提交为一个镜像，我们以后就使用我们修改过的镜像即可，这就是我们自己一个修改的镜像
+</code></pre>
+<p>如果你想要保存当前容器的状态，就可以通过commit来提交，获得一个镜像，就好比我们以前学习VM时候的快照。</p>
+<h2 id="容器数据卷"><a href="#容器数据卷" class="headerlink" title="容器数据卷"></a>容器数据卷</h2><h3 id="什么是容器数据卷"><a href="#什么是容器数据卷" class="headerlink" title="什么是容器数据卷"></a>什么是容器数据卷</h3><p><strong>docker的理念回顾</strong></p>
+<p>将应用和环境打包成一个镜像</p>
+<p>数据？如果数据都在容器中，那么我们容器删除，数据就会丢失  ==需求：数据可以持久化==</p>
+<p>MySQL ，容器删了，删库跑路 ==需求：MySQL数据可以存储在本地==</p>
+<p>容器之间可以有一个数据共享的技术，Docker容器中产生的数据，同步到本地。</p>
+<p>这就是卷技术。目录的挂载，将我们容器内的目录，挂载到Linux上面。</p>
+<p><img src="Docker学习.assets/image-20201210171214923.png" alt="image-20201210171214923"></p>
+<p><strong>总结一句话：容器的持久化和同步操作，容器间也是可以数据共享的</strong></p>
+<h3 id="使用数据卷"><a href="#使用数据卷" class="headerlink" title="使用数据卷"></a>使用数据卷</h3><blockquote>
+<p>方式以：直接使用命令来挂载   -v</p>
+</blockquote>
+<pre><code class="shell">docker run -it -v 主机目录：容器内目录
+
+#测试
+docker run -it -v /home/ceshi:/home centos /bin/bash
+
+#启动起来时候我们可以通过 docker inspect 容器id
+</code></pre>
+<p><img src="Docker学习.assets/image-20201210201114351.png" alt="image-20201210201114351"></p>
+<p>好处：我们以后修改只需要在本地修改即可，容器内会自动同步。</p>
+<h3 id="实战：安装MySQL"><a href="#实战：安装MySQL" class="headerlink" title="实战：安装MySQL"></a>实战：安装MySQL</h3><p>思考：MySQL的数据持久化的问题</p>
+<pre><code class="shell">#获取镜像
+docker pull mysql:5.7
+
+#运行容器，需要做数据挂载 #安装启动mysql，需要配置密码的，这是要注意点
+
+#官方测试  docker run --name some-mysql -v /my/custom:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+
+docker run -d -p 3310:3306 -v /www/server/mysql/my.cnf:/home/mysql/my.cnf -v /www/server/data:/home/mysql/data -e MYSQL_ROOT_PASSWORD=5ea7a88cd4bb664d --name mysql01 mysql:5.7
+
+#在本地测试创建一个数据库，查看一下我们映射的路径是否ok
+</code></pre>
+<p>把容器删除，我们挂载到本地的数据卷没有丢失，这就是容器数据持久化功能。</p>
+<h3 id="具名和匿名挂载"><a href="#具名和匿名挂载" class="headerlink" title="具名和匿名挂载"></a>具名和匿名挂载</h3><pre><code class="shell">#匿名挂载
+-v 容器内路径
+docker run -d -P --name nginx01 -v /ect/nginx nginx
+
+#查看所有的volume的情况
+docker volume ls
+
+#这里发现，这种就是匿名挂载，我们在 -v只写了容器内的路径，没有写容器外的路径
+
+#具名挂载
+docker run -d -P --name nginx02 -v juming-nginx:/etc/nginx nginx
+
+#通过 -v 卷名：容器内路径
+#查看一下这个卷
+</code></pre>
+<p>所有的docker容器内的卷，没有指定目录的情况下都是在<code>/var/lib/docker/volumes/xxxx/_data</code></p>
+<p>我们通过具名挂载可以方便的找到我们的一个卷，大多数情况在使用<code>具名挂载</code></p>
+<pre><code class="shell">#如何确定是具体挂载还是匿名挂载，还是指定路径挂载
+-v 容器内路径      #匿名挂载
+-v 卷名:容器内路径  #具名挂载
+-v /宿主机路径:容器路径 #指定路径挂载
+</code></pre>
+<p>拓展：</p>
+<pre><code class="shell">#通过 -v 容器内路径：ro rw 改变读写权限
+ro readonly  #只读
+rw readwrite #可读可写
+
+#一旦这个设置了容器权限，容器对我们挂载出来的内容就有了限制
+docker run -d -P --name nginx02 -v juming-nginx:/etc/nginx:ro nginx
+docker run -d -P --name nginx02 -v juming-nginx:/etc/nginx:rw nginx
+
+#ro 只要看到ro就说明这个路径只能通过宿主机来操作，容器内部是无法操作的。
+</code></pre>
+<h3 id="初识Dockerfile"><a href="#初识Dockerfile" class="headerlink" title="初识Dockerfile"></a>初识Dockerfile</h3><p>Dockerfile就是用来构建docker镜像的构建文件，命令脚本、</p>
+<p> 通过这个脚本可以生成镜像，镜像是一层一层的，脚本一个个的命令，每个命令是一层。</p>
+<pre><code class="shell">#创建一个dockerfile文件，名字可以随机，建议Dockerfile
+文件中的内容指令（大写） 参数
+
+FROM centos
+
+VOLUME [&quot;volume01&quot;,&quot;volume02&quot;]
+
+CMD echo &quot;---end---&quot;
+CMD /bin/bash
+
+#这里的每个命令，就是镜像的一层
+
+#生成镜像
+docker build -f dockerfile1 -t liuzhang/centos:1.0 .
+
+#启动自己写的容器
+docker run -it 镜像id /bin/bash
+
+</code></pre>
+<p><img src="Docker学习.assets/image-20201212155136884.png" alt="image-20201212155136884"></p>
+<p>这个卷和外部一定有一个同步的目录</p>
+<p><img src="Docker学习.assets/image-20201212161839076.png" alt="image-20201212161839076"></p>
+<p>查看一下卷挂载的路径</p>
+<pre><code class="shell">docker inspect 容器ID
+</code></pre>
+<p><img src="Docker学习.assets/image-20201212162007632.png" alt="image-20201212162007632"></p>
+<p>测试刚才的文件是否同步数据。</p>
+<p>这种方式我们未来使用的十分多，因为我们通常会构建自己的镜像。</p>
+<p>假设构建镜像时候没有挂载卷，要手动镜像挂载 -v 卷名：容器内路径。</p>
+<h3 id="数据卷容器"><a href="#数据卷容器" class="headerlink" title="数据卷容器"></a>数据卷容器</h3><p>多个mysql同步数据</p>
+<p><img src="Docker学习.assets/image-20201212185812585.png" alt="image-20201212185812585"></p>
+<pre><code class="shell">#q启动3个容器，通过我们刚才自己写的镜像启动。
+docker run -it --name docker02 --volumes-from docker01 镜像容器 （docker02为son，docker01为father）
+</code></pre>
+<p>多个mysql实现数据共享</p>
+<pre><code class="shell">docker run -d -p 3310:3306 -v /www/server/mysql/my.cnf:/home/mysql/my.cnf -v /www/server/data:/home/mysql/data -e MYSQL_ROOT_PASSWORD=5ea7a88cd4bb664d --name mysql01 mysql:5.7
+
+docker run -d -p 3311:3306 -e MYSQL_ROOT_PASSWORD=5ea7a88cd4bb664d --name mysql02  --volumes-from mysql01 mysql:5.7
+</code></pre>
+<p><strong>结论：</strong></p>
+<p>容器之间配置信息的传递，数据卷容器的生命周期一直持续到没有容器使用为止。</p>
+<p>但是一旦你持久化到了本地，这时候本地的数据是不会被删除。</p>
+<h2 id="DockerFile"><a href="#DockerFile" class="headerlink" title="DockerFile"></a>DockerFile</h2><p>dockerfile是用来构建docker镜像文件的命令参数脚本</p>
+<p>构建步骤：</p>
+<ol>
+<li>编写一个dockerfile文件</li>
+<li>docker build构建成为一个镜像</li>
+<li>docker run 运行镜像</li>
+<li>docker push 发布镜像（DockerHub、阿里云镜像仓库）</li>
+</ol>
+<p>很多官方镜像都是基础包，很多功能没有，我们通常会自己搭建自己的镜像。</p>
+<p>官方既然可以制作镜像，那我们也可以。</p>
+<h3 id="DockerFile构建过程"><a href="#DockerFile构建过程" class="headerlink" title="DockerFile构建过程"></a>DockerFile构建过程</h3><p><strong>基础知识：</strong></p>
+<ol>
+<li>每个保留关键字（指令）都是必须是大写字母</li>
+<li>执行从上到下顺序执行</li>
+<li>#表示注释</li>
+<li>每一个指令都会创建提交一个新的镜像层，并提交。</li>
+</ol>
+<p>dockerfile是面向开发的，我们以后要发布项目，做镜像，就需要编写dockerfile文件，这个文件十分简单。</p>
+<p>Docker镜像逐渐成为企业交付的标准，必须要掌握。</p>
+<p>步骤：开发，部署，运维。。。缺一不可。</p>
+<p>DockerFile : 构建文件，定义了一切的步骤，源代码</p>
+<p>DockerImages：通过DockerFILE构建生成的镜像，最终发布和运行的产品。</p>
+<p>Docker容器：容器就是镜像运行起来提供服务</p>
+<h3 id="DockerFile的指令"><a href="#DockerFile的指令" class="headerlink" title="DockerFile的指令"></a>DockerFile的指令</h3><p>以前的话我们就是使用别人的，现在我们知道了这写指令后，我们来练习自己写一个镜像。</p>
+<pre><code class="shell">FROM           #基础镜像，一切从这里开始构建
+MAINTAINER     #镜像是谁写的，姓名+邮箱
+RUN            #镜像构建的时候需要运行的命令
+ADD            #步骤：tomcat镜像，这个tomcat压缩包，添加内容
+WORKDIR        #镜像的工作目录
+VOLUME         #挂载的目录
+EXPORT         #保留端口配置
+
+CMD            #指定这个容器启动的时候要运行的命令，只要最后一个会生效，可被替代
+ENTRYPOINT     #指定这个容器启动的时候要运行的命令，可以追加命令
+ONBUILD        #当构建一个被继承DockerFile 这个时候就会运行ONBUILD的指令。触发指令。
+COPY           #类似ADD ，将我们文件拷贝到镜像中
+ENV            #构建的时候设置环境变量
+</code></pre>
+<p><img src="Docker学习.assets/image-20201212210023176.png" alt="image-20201212210023176"></p>
+<h2 id="Docker网络"><a href="#Docker网络" class="headerlink" title="Docker网络"></a>Docker网络</h2><p>28</p>
 
         </div>
         <!-- .entry-content -->
@@ -494,28 +943,11 @@ systemctl enable mongodb.service
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
-          
-            <div class="post-nepre half previous">
-          
-            <a href="/2020/12/13/Docker学习/" rel="prev">
-              <div class="background">
-                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/e-liuzhang/cdn@v1.0/images/1589450799625.webp" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/e-liuzhang/cdn@v1.0/images/1589450799625.webp">
-              </div>
-              <span class="label">
-              Previous Post</span>
-              <div class="info">
-                <h3>
-                Docker学习</h3>
-                <hr>
-              </div>
-            </a>
-          </div>
-        
         
           
-            <div class="post-nepre half next">
+            <div class="post-nepre full next">
           
-            <a href="/2020/11/17/Linux常识/" rel="next">
+            <a href="/2020/11/26/Liunx下mongDB的安装与配置/" rel="next">
               <div class="background">
                 <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/e-liuzhang/cdn@v1.0/images/1589450799625.webp" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/e-liuzhang/cdn@v1.0/images/1589450799625.webp">
               </div>
@@ -523,7 +955,7 @@ systemctl enable mongodb.service
               Next Post</span>
               <div class="info">
                 <h3>
-                Linux常识</h3>
+                Liunx下mongDB的安装与配置</h3>
                 <hr>
               </div>
             </a>
